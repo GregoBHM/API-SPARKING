@@ -1,0 +1,57 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  api:
+    build: ./api
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      ADMIN_TOKEN: ${ADMIN_TOKEN}
+      LICENSE_HASH_SECRET: ${LICENSE_HASH_SECRET}
+      OFFLINE_GRACE_HOURS: ${OFFLINE_GRACE_HOURS:-72}
+      ACTIVATION_BIND_FINGERPRINT: ${ACTIVATION_BIND_FINGERPRINT:-true}
+      ENABLE_DOCS: ${ENABLE_DOCS:-false}
+      SIGNING_KEY_DIR: /app/keys
+    volumes:
+      - signing_keys:/app/keys
+    expose:
+      - "8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3).read()"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  discord_bot:
+    build: ./bot
+    restart: on-failure
+    environment:
+      DISCORD_TOKEN: ${DISCORD_TOKEN:-}
+      DISCORD_GUILD_ID: ${DISCORD_GUILD_ID:-}
+      DISCORD_ADMIN_ROLE_IDS: ${DISCORD_ADMIN_ROLE_IDS:-}
+      DISCORD_API_TOKEN: ${DISCORD_API_TOKEN:-}
+      ADMIN_TOKEN: ${ADMIN_TOKEN}
+      API_INTERNAL_URL: http://api:8000
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  pgdata:
+  signing_keys:
