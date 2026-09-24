@@ -30,6 +30,11 @@ class ProductCreate(BaseModel):
     slug: str = Field(min_length=1, max_length=80, pattern=r"^[a-z0-9][a-z0-9._-]*$")
 
 
+class ProductUpdate(BaseModel):
+    name: str | None = Field(default=None, min_length=1, max_length=120)
+    active: bool | None = None
+
+
 class ProductOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
@@ -45,6 +50,11 @@ class CustomerCreate(BaseModel):
     email: str | None = Field(default=None, max_length=255)
     discord_id: str | None = Field(default=None, max_length=32)
     notes: str | None = None
+
+
+class CustomerDiscordEnsure(BaseModel):
+    discord_id: str = Field(min_length=1, max_length=32, pattern=r"^\d+$")
+    username: str | None = Field(default=None, max_length=100)
 
 
 class CustomerOut(BaseModel):
@@ -75,6 +85,10 @@ class LicenseUpdate(BaseModel):
     expires_at: datetime | None = None
     customer_id: UUID | None = None
     product_slugs: list[str] | None = None
+
+
+class UserResetRequest(BaseModel):
+    discord_id: str = Field(min_length=1, max_length=32, pattern=r"^\d+$")
 
 
 class LicenseOut(BaseModel):

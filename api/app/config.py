@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     offline_grace_hours: int = 72
     activation_bind_fingerprint: bool = True
     enable_docs: bool = False
+    user_activation_reset_cooldown_hours: int = 24
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 

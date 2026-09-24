@@ -24,6 +24,7 @@ services:
       OFFLINE_GRACE_HOURS: ${OFFLINE_GRACE_HOURS:-72}
       ACTIVATION_BIND_FINGERPRINT: ${ACTIVATION_BIND_FINGERPRINT:-true}
       ENABLE_DOCS: ${ENABLE_DOCS:-false}
+      USER_ACTIVATION_RESET_COOLDOWN_HOURS: ${USER_ACTIVATION_RESET_COOLDOWN_HOURS:-24}
       SIGNING_KEY_DIR: /app/keys
     volumes:
       - signing_keys:/app/keys
@@ -48,6 +49,8 @@ services:
       DISCORD_API_TOKEN: ${DISCORD_API_TOKEN:-}
       ADMIN_TOKEN: ${ADMIN_TOKEN}
       API_INTERNAL_URL: http://api:8000
+      DISCORD_CLEAN_SLASH_ON_START: ${DISCORD_CLEAN_SLASH_ON_START:-true}
+      DISCORD_LICENSE_DM_ON_CREATE: ${DISCORD_LICENSE_DM_ON_CREATE:-true}
     depends_on:
       api:
         condition: service_healthy
