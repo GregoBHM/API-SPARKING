@@ -35,6 +35,11 @@ class ProductUpdate(BaseModel):
     active: bool | None = None
 
 
+class ProductMigrate(BaseModel):
+    source_slug: str = Field(min_length=1, max_length=80)
+    target_slug: str = Field(min_length=1, max_length=80)
+
+
 class ProductOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
@@ -52,8 +57,8 @@ class CustomerCreate(BaseModel):
     notes: str | None = None
 
 
-class CustomerDiscordEnsure(BaseModel):
-    discord_id: str = Field(min_length=1, max_length=32, pattern=r"^\d+$")
+class CustomerDiscordUpsert(BaseModel):
+    discord_id: str = Field(min_length=5, max_length=32)
     username: str | None = Field(default=None, max_length=100)
 
 
@@ -87,10 +92,6 @@ class LicenseUpdate(BaseModel):
     product_slugs: list[str] | None = None
 
 
-class UserResetRequest(BaseModel):
-    discord_id: str = Field(min_length=1, max_length=32, pattern=r"^\d+$")
-
-
 class LicenseOut(BaseModel):
     id: UUID
     masked_key: str
@@ -101,6 +102,8 @@ class LicenseOut(BaseModel):
     offline_grace_hours: int
     expires_at: datetime | None
     customer_id: UUID | None
+    customer_username: str | None = None
+    customer_discord_id: str | None = None
     products: list[str]
     created_at: datetime
     updated_at: datetime

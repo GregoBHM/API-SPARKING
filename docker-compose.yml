@@ -49,8 +49,11 @@ services:
       DISCORD_API_TOKEN: ${DISCORD_API_TOKEN:-}
       ADMIN_TOKEN: ${ADMIN_TOKEN}
       API_INTERNAL_URL: http://api:8000
+      DISCORD_STATUS: ${DISCORD_STATUS:-online}
+      DISCORD_ACTIVITY_TYPE: ${DISCORD_ACTIVITY_TYPE:-watching}
+      DISCORD_ACTIVITY_TEXT: ${DISCORD_ACTIVITY_TEXT:-SparkingCraft Licenses}
+      DISCORD_BRAND_NAME: ${DISCORD_BRAND_NAME:-SparkingCraft License Manager}
       DISCORD_CLEAN_SLASH_ON_START: ${DISCORD_CLEAN_SLASH_ON_START:-true}
-      DISCORD_LICENSE_DM_ON_CREATE: ${DISCORD_LICENSE_DM_ON_CREATE:-true}
     depends_on:
       api:
         condition: service_healthy
